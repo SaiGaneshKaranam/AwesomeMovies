@@ -21,23 +21,27 @@ import java.nio.file.Files.find
 
 
 class MovieListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
     val moviesList = mutableListOf<MovieItem>()
-
-
-
+    private lateinit var mListener :onItemClickListener
+    interface onItemClickListener{
+        fun onItemClick(position: Int)
+    }
+    fun setOnItemClickListener(listener: onItemClickListener){
+        mListener=listener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
+
         return MovieItemViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.movie_list_item, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.movie_list_item, parent, false),mListener
         )
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MovieItemViewHolder) {
             holder.bind(moviesList[position])
-            holder.itemView.setOnClickListener(View.OnClickListener {
+            /*holder.itemView.setOnClickListener(View.OnClickListener {
 
 
                 val imdbid =holder.id
@@ -57,6 +61,7 @@ class MovieListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                             val moviedetails: MovieInDetail = it
 
 
+                            holder.movieYear.text=moviedetails.imdbID.toString()
 
 
                         }
@@ -74,7 +79,10 @@ class MovieListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
 
-            })
+            })*/
+            /*holder.itemView.setOnClickListener {
+                mListener.onItemClick(holder.id.toString())
+            }*/
 
 
 
@@ -105,7 +113,7 @@ class MovieListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 }
 
 
-class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class MovieItemViewHolder(itemView: View , listener:MovieListAdapter.onItemClickListener) : RecyclerView.ViewHolder(itemView) {
     var movieThumbnail: ImageView
 
     lateinit var id : String
@@ -119,6 +127,11 @@ class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         movieTitle = itemView.findViewById(R.id.movieTitle)
         movieYear = itemView.findViewById(R.id.movieReleaseYear)
         type = itemView.findViewById(R.id.type)
+        itemView.setOnClickListener{
+             listener.onItemClick(adapterPosition)
+         }
+
+
 
     }
 
@@ -128,6 +141,7 @@ class MovieItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         movieYear.text = movieItem.year
         type.text = movieItem.type
         id=movieItem.imdbID
+
 
     }
 
